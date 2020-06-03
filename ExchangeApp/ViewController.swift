@@ -2,19 +2,76 @@
 //  ViewController.swift
 //  ExchangeApp
 //
-//  Created by MacBook Air on 01/06/2020.
-//  Copyright © 2020 MacBook Air. All rights reserved.
-//
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController  {
+    
 
+    @IBOutlet weak var FromLabel: UILabel!
+    
+    @IBOutlet weak var ToLabel: UILabel!
+    
+    @IBOutlet weak var DollarSign: UIImageView!
+    
+    @IBOutlet weak var ArrowSign: UIImageView!
+    
+    @IBOutlet weak var FromPickerView: UIPickerView!
+    
+    @IBOutlet weak var ToPickerView: UIPickerView!
+    
+    @IBOutlet weak var ValueTextField: UITextField!
+    
+    @IBOutlet weak var ValueLabel: UILabel!
+    
+    @IBAction func changeButton(_ sender: Any) {
+            API.getRate(from: money[FromPickerView.selectedRow(inComponent: 0)], to: money[ToPickerView.selectedRow(inComponent: 0)]) { [weak self] (result) in
+                switch result {
+                case .success(let rate):
+                    guard let inputString = self?.ValueTextField.text, let inputInt = Int(inputString) else {
+                        return
+                    }
+                    let value = Double(round(100 * (rate * Float(inputInt))) / 100)
+                    self?.ValueLabel.text = String(format:  "%.2f", value)
+                    self?.view.layoutIfNeeded()
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    
+    
+    let money = ["CAD","HKD","ISK","PHP","DKK","HUF","CZK","AUD","RON","SEK","IDR","INR","BRL","RUB","HRK","JPY","THB","CHF","SGD","PLN","BGN","TRY","CNY","NOK","NZD","ZAR","USD","MXN","ILS","GBP","KRW","MYR"]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        hideKeyboardWhenTappedAround()
     }
 
-
+    func hideKeyboardWhenTappedAround() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    @objc func dismissKeyboard() {
+        DispatchQueue.main.async {[weak self] in
+            self?.view.endEditing(true)
+        }
+    }
 }
+
+extension ViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return money[row]
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return money.count
+    }
+}
+
 
