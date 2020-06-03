@@ -24,8 +24,7 @@ class API {
             switch response.result {
             case .success(let resp):
                 let json = JSON(resp)
-                guard let rate = json["rates",to].float else {
-                    resultHandler(.failure(APIErrors.JSONDecodeErrror))
+                guard let rate = json["rates",to].float else { resultHandler(.failure(APIErrors.JSONDecodeErrror))
                     return
                 }
                 resultHandler(.success(rate))

@@ -46,6 +46,8 @@ class ViewController: UIViewController  {
     override func viewDidLoad() {
         super.viewDidLoad()
         hideKeyboardWhenTappedAround()
+        FromPickerView.selectRow(13, inComponent: 0, animated: true)
+        ToPickerView.selectRow(26, inComponent: 0, animated: true)
     }
 
     func hideKeyboardWhenTappedAround() {
